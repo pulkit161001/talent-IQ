@@ -2,7 +2,8 @@ import express from "express";
 import { ENV } from "./lib/env.js";
 import path from "path";
 const app = express();
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.get("/health", (req, res) => {
 	res.status(200).json({ msg: "health endpoint" });
@@ -12,17 +13,13 @@ app.get("/books", (req, res) => {
 });
 
 // make our app ready for production
-if (ENV.NODE_ENV == "production") {
-	// make dist folder from frontend and make it static asset
-	// from here (current directory) to frontend/dist
-	app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+if (ENV.NODE_ENV === "production") {
+	const frontendPath = path.join(__dirname, "../../frontend/dist");
 
-	// endpoint (* : every)
-	app.get("/{*any}", (req, res) => {
-		// from here to where (either write like path or comma seperated)
-		res.sendFile(
-			path.join(__dirname, "../../frontend", "dist", "index.html")
-		);
+	app.use(express.static(frontendPath));
+
+	app.use((req, res) => {
+		res.sendFile(path.join(frontendPath, "index.html"));
 	});
 }
 app.listen(ENV.PORT, () => {

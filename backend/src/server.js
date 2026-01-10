@@ -15,12 +15,14 @@ app.get("/books", (req, res) => {
 if (ENV.NODE_ENV == "production") {
 	// make dist folder from frontend and make it static asset
 	// from here (current directory) to frontend/dist
-	app.use(express.static(path.join(__dirname, "../frontend/dist")));
+	app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
 	// endpoint (* : every)
 	app.get("/{*any}", (req, res) => {
 		// from here to where (either write like path or comma seperated)
-		res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+		res.sendFile(
+			path.join(__dirname, "../../frontend", "dist", "index.html")
+		);
 	});
 }
 app.listen(ENV.PORT, () => {

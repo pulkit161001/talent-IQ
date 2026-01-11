@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-dotenv.config();
+// quiet will not show how many env variables in the terminal
+dotenv.config({ quiet: "true" });
 
 export const ENV = {
 	PORT: process.env.PORT,

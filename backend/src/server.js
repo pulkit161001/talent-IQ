@@ -32,7 +32,7 @@ app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes);
 
 app.get("/health", protectRoute, (req, res) => {
-	res.status(200).json({ msg: "health endpoint" });
+	res.status(200).json({ message: "health endpoint" });
 });
 
 // make our app ready for production

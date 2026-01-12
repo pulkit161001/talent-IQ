@@ -9,6 +9,7 @@ import { inngest, functions } from "./lib/inngest.js";
 import { clerkMiddleware } from "@clerk/express";
 import { protectRoute } from "./middleware/protectRoute.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import sessionRoutes from "./routes/sessionRoute.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -30,6 +31,7 @@ app.use(clerkMiddleware()); //this adds auth fields to request object : req.auth
 app.use("/api/inngest", serve({ client: inngest, functions }));
 
 app.use("/api/chat", chatRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 app.get("/health", protectRoute, (req, res) => {
 	res.status(200).json({ message: "health endpoint" });

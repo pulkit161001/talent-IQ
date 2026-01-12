@@ -46,6 +46,7 @@ export async function createSession(req, res) {
 			members: [clerkId],
 		});
 		await channel.create();
+		// TODO: handle (what is session or channel fail we still have callId) rollback
 		// TODO : email, notification etc.
 		res.status(201).json({ session: session });
 	} catch (error) {
@@ -111,9 +112,19 @@ export async function joinSession(req, res) {
 		if (!session) {
 			return res.status(404).json({ message: "Session not found" });
 		}
+		if (session.status !== "active") {
+			return res
+				.status(400)
+				.json({ message: "Cannot join a completed session" });
+		}
+		if (session.host.toString() === userId.toString()) {
+			return res.status(400).json({
+				message: "Host cannot join their own session as participant",
+			});
+		}
 		//check if session is already full - has a participant
 		if (session.participant)
-			return res.status(404).json({ message: "Session is full" });
+			return res.status(409).json({ message: "Session is full" });
 		session.participant = userId;
 		await session.save();
 		//add user to the stream chat
@@ -146,8 +157,6 @@ export async function endSession(req, res) {
 				.status(400)
 				.json({ message: "Session is already completed" });
 		}
-		session.status = "completed";
-		await session.save();
 
 		//we created videoCall and chatMessaging while creatingSesion
 		// now we need to end both
@@ -155,9 +164,13 @@ export async function endSession(req, res) {
 		// delete stream video call
 		const call = streamClient.video.call("default", session.callId);
 		await call.delete({ hard: true });
+
 		// delete stream chat channel
 		const channel = chatClient.channel("messaging", session.callId);
 		await channel.delete();
+
+		session.status = "completed";
+		await session.save();
 
 		res.status(200).json({
 			session,

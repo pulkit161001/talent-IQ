@@ -6,6 +6,9 @@ import { connectDB } from "./lib/db.js";
 import cors from "cors";
 import { serve } from "inngest/express";
 import { inngest, functions } from "./lib/inngest.js";
+import { clerkMiddleware } from "@clerk/express";
+import { protectRoute } from "./middleware/protectRoute.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -20,16 +23,16 @@ app.use(
 		credentials: true,
 	})
 );
+app.use(clerkMiddleware()); //this adds auth fields to request object : req.auth()
 
 // if we hit this endpoint trigger inngest express function
 // add frontend URL/endpoint in the inngest website Apps section
 app.use("/api/inngest", serve({ client: inngest, functions }));
 
-app.get("/health", (req, res) => {
+app.use("/api/chat", chatRoutes);
+
+app.get("/health", protectRoute, (req, res) => {
 	res.status(200).json({ msg: "health endpoint" });
-});
-app.get("/books", (req, res) => {
-	res.status(200).json({ msg: "books endpoint" });
 });
 
 // make our app ready for production

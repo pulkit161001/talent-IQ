@@ -27,6 +27,7 @@ const syncUser = inngest.createFunction(
 		await User.create(newUser);
 		// also save it to stram
 		await upsertStreamUser({
+			// this is the fields name that stream allows or use
 			id: newUser.clerkId.toString(),
 			name: newUser.name,
 			image: newUser.profileImage,

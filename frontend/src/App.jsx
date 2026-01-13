@@ -4,23 +4,34 @@ import {
 	SignInButton,
 	SignOutButton,
 	UserButton,
+	useUser,
 } from "@clerk/clerk-react";
+import { Routes, Route, Navigate } from "react-router";
+import HomePage from "./pages/HomePage";
+import ProblemsPage from "./pages/ProblemsPage";
+import { Toaster } from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 function App() {
+	// useUser hook given by clerk which gives this value
+	const { isSingedIn } = useUser();
+	const { data, isLoading, error } = useQuery();
 	return (
 		<>
-			<h1>Welcome to the app</h1>
-			<SignedOut>
-				<SignInButton mode="modal">
-					<button>Sign up please</button>
-				</SignInButton>
-			</SignedOut>
-			<SignedIn>
-				<SignOutButton />
-			</SignedIn>
-			<UserButton />
+			<Routes>
+				<Route path="/" element={<HomePage />} />
+				<Route
+					path="/problems"
+					element={
+						isSingedIn ? <ProblemsPage /> : <Navigate to={"/"} />
+					}
+				/>
+			</Routes>
+			<Toaster />
 		</>
 	);
 }
 
 export default App;
+
+// tw, daisyUI, react-router-dom, react-hot-toast, react-query aka tanstack query, axios

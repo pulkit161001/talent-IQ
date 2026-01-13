@@ -21,6 +21,7 @@ createRoot(document.getElementById("root")).render(
 		<BrowserRouter>
 			{/* after wrapping we can use tanstack functionality in our entire app */}
 			<QueryClientProvider client={queryClient}>
+				{/* authication in front */}
 				<ClerkProvider publishableKey={PUBLISHABLE_KEY}>
 					<App />
 				</ClerkProvider>

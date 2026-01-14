@@ -1,0 +1,82 @@
+// Piston API is a service for code execution
+const PISTION_API = "https://emkc.org/api/v2/piston";
+
+const LANGUAGE_VERSIONS = {
+	javascript: { language: "javascript", version: "18.15.0" },
+	python: { language: "python", version: "3.10.0" },
+	java: { language: "java", version: "15.0.2" },
+};
+
+/**
+ * @param {string} language - programming language
+ * @param {string} code - source code to execute
+ * @returns {Promise<{success:boolean,output?:string, error?:string}>}
+ */
+export async function executeCode(language, code) {
+	try {
+		const languageConfig = LANGUAGE_VERSIONS[language];
+		if (!languageConfig) {
+			return {
+				success: false,
+				error: `Unsupported language: ${language}`,
+			};
+		}
+		const response = await fetch(`${PISTION_API}/execute`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				language: languageConfig.language,
+				version: languageConfig.version,
+				files: [
+					{
+						name: `main.${getFileExtension(language)}`,
+						content: code,
+					},
+				],
+			}),
+		});
+
+		if (!response.ok) {
+			return {
+				success: false,
+				error: `HTTP error! status: ${response.status}`,
+			};
+		}
+
+		const data = await response.json();
+		// piston api return value after running
+		const run = data.run || {};
+		const compile = data.compile || {};
+		const stdout =
+			typeof run.stdout === "string" ? run.stdout : run.output || "";
+		const stderr = compile.stderr || run.stderr || "";
+		const exitCode = typeof run.code === "number" ? run.code : 0;
+		if (stderr || exitCode !== 0) {
+			return {
+				success: false,
+				output: stdout,
+				error: stderr || `Process exited with code ${exitCode}`,
+			};
+		}
+		return {
+			success: true,
+			output: stdout,
+		};
+	} catch (error) {
+		return {
+			success: false,
+			error: `Failed to execute code: ${error.message}`,
+		};
+	}
+}
+
+function getFileExtension(language) {
+	const extensions = {
+		javascript: "js",
+		python: "py",
+		java: "java",
+	};
+	return extensions[language] || "txt";
+}

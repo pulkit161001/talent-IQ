@@ -5,6 +5,7 @@ import ProblemsPage from "./pages/ProblemsPage";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import DashboardPage from "./pages/DashboardPage";
+import ProblemPage from "./pages/ProblemPage";
 
 function App() {
 	// useUser hook given by clerk which gives this value
@@ -35,6 +36,12 @@ function App() {
 					path="/problems"
 					element={
 						isSignedIn ? <ProblemsPage /> : <Navigate to={"/"} />
+					}
+				/>
+				<Route
+					path="/problem/:id"
+					element={
+						isSignedIn ? <ProblemPage /> : <Navigate to={"/"} />
 					}
 				/>
 			</Routes>

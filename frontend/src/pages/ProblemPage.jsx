@@ -89,14 +89,26 @@ const ProblemPage = () => {
 	const handleRunCode = async () => {
 		setIsRunning(true);
 		setOutput(null);
-		const result = await executeCode(selectedLanguage, code);
-		setOutput(result);
-		setIsRunning(false);
+		try {
+			const result = await executeCode(selectedLanguage, code);
+			setOutput(result);
 
-		// check if code executed successfully and matches expected output
-		if (result.success) {
+			if (!result.success) {
+				toast.error(
+					result.error
+						? `Execution error: ${result.error}`
+						: "Code execution failed!"
+				);
+				return;
+			}
+			// check if code executed successfully and matches expected output
 			const expectedOutput =
-				currentProblem.expectedOutput[selectedLanguage];
+				currentProblem?.expectedOutput?.[selectedLanguage];
+			if (typeof expectedOutput !== "string") {
+				toast.error("No expected output configured for this language.");
+				return;
+			}
+
 			const testsPassed = checkIfTestsPassed(
 				result.output,
 				expectedOutput
@@ -105,10 +117,10 @@ const ProblemPage = () => {
 				triggerConfetti();
 				toast.success("All testCases passed");
 			} else {
-				toast.error("TestCases Failed");
+				toast.error("Tests Failed. Check your output");
 			}
-		} else {
-			toast.error("Code execution failed.");
+		} finally {
+			setIsRunning(false);
 		}
 	};
 

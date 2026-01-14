@@ -47,19 +47,22 @@ export async function executeCode(language, code) {
 
 		const data = await response.json();
 		// piston api return value after running
-		const output = data.run.output || "";
-		const stderr = data.run.stderr || "";
-		if (stderr) {
+		const run = data.run || {};
+		const compile = data.compile || {};
+		const stdout =
+			typeof run.stdout === "string" ? run.stdout : run.output || "";
+		const stderr = compile.stderr || run.stderr || "";
+		const exitCode = typeof run.code === "number" ? run.code : 0;
+		if (stderr || exitCode !== 0) {
 			return {
 				success: false,
-				output: output,
-				error: stderr,
+				output: stdout,
+				error: stderr || `Process exited with code ${exitCode}`,
 			};
 		}
-
 		return {
 			success: true,
-			output: output || "No output",
+			output: stdout,
 		};
 	} catch (error) {
 		return {

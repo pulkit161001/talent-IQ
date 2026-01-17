@@ -60,6 +60,7 @@ export async function getActiveSessions(_, res) {
 		// we want problemName, hostName fields also (in the session obj only host id is provided). Using hostId we have to find host name
 		const sessions = await Session.find({ status: "active" })
 			.populate("host", "name profileImage email clerkId")
+			.populate("participant", "name profileImage email clerkId")
 			// sort in decending order
 			.sort({ createdAt: -1 })
 			.limit(20);

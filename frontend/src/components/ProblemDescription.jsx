@@ -14,9 +14,7 @@ function ProblemDescription({
 						{problem.title}
 					</h1>
 					<span
-						className={`badge ${getDifficultyBadgeClass(
-							problem.difficulty
-						)}`}
+						className={`badge ${getDifficultyBadgeClass(problem.difficulty)}`}
 					>
 						{problem.difficulty}
 					</span>
@@ -42,14 +40,11 @@ function ProblemDescription({
 			<div className="p-6 space-y-6">
 				{/* PROBLEM DESC */}
 				<div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-					<h2 className="text-xl font-bold text-base-content">
-						Description
-					</h2>
+					<h2 className="text-xl font-bold text-base-content">Description</h2>
 
 					<div className="space-y-3 text-base leading-relaxed">
-						<p className="text-base-content/90">
-							{problem.description.text}
-						</p>
+						<p className="text-base-content/90">{problem.description.text}</p>
+						{/* TODO: notes not displayed */}
 						{problem.description.notes.map((note, idx) => (
 							<p key={idx} className="text-base-content/90">
 								{note}
@@ -60,9 +55,7 @@ function ProblemDescription({
 
 				{/* EXAMPLES SECTION */}
 				<div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-					<h2 className="text-xl font-bold mb-4 text-base-content">
-						Examples
-					</h2>
+					<h2 className="text-xl font-bold mb-4 text-base-content">Examples</h2>
 					<div className="space-y-4">
 						{problem.examples.map((example, idx) => (
 							<div key={idx}>
@@ -87,9 +80,7 @@ function ProblemDescription({
 									{example.explanation && (
 										<div className="pt-2 border-t border-base-300 mt-2">
 											<span className="text-base-content/60 font-sans text-xs">
-												<span className="font-semibold">
-													Explanation:
-												</span>{" "}
+												<span className="font-semibold">Explanation:</span>{" "}
 												{example.explanation}
 											</span>
 										</div>

@@ -1,11 +1,11 @@
 import { useUser } from "@clerk/clerk-react";
-import { Navigate, Route, Routes } from "react-router";
-import HomePage from "./pages/HomePage";
-import ProblemsPage from "./pages/ProblemsPage";
 import { Toaster } from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
+import { Navigate, Route, Routes } from "react-router";
 import DashboardPage from "./pages/DashboardPage";
+import HomePage from "./pages/HomePage";
 import ProblemPage from "./pages/ProblemPage";
+import ProblemsPage from "./pages/ProblemsPage";
+import SessionPage from "./pages/SessionPage";
 
 function App() {
 	// useUser hook given by clerk which gives this value
@@ -18,31 +18,23 @@ function App() {
 			<Routes>
 				<Route
 					path="/"
-					element={
-						!isSignedIn ? (
-							<HomePage />
-						) : (
-							<Navigate to={"/dashboard"} />
-						)
-					}
+					element={!isSignedIn ? <HomePage /> : <Navigate to={"/dashboard"} />}
 				/>
 				<Route
 					path="/dashboard"
-					element={
-						isSignedIn ? <DashboardPage /> : <Navigate to={"/"} />
-					}
+					element={isSignedIn ? <DashboardPage /> : <Navigate to={"/"} />}
 				/>
 				<Route
 					path="/problems"
-					element={
-						isSignedIn ? <ProblemsPage /> : <Navigate to={"/"} />
-					}
+					element={isSignedIn ? <ProblemsPage /> : <Navigate to={"/"} />}
 				/>
 				<Route
 					path="/problem/:id"
-					element={
-						isSignedIn ? <ProblemPage /> : <Navigate to={"/"} />
-					}
+					element={isSignedIn ? <ProblemPage /> : <Navigate to={"/"} />}
+				/>
+				<Route
+					path="/session/:id"
+					element={isSignedIn ? <SessionPage /> : <Navigate to={"/"} />}
 				/>
 			</Routes>
 			<Toaster />

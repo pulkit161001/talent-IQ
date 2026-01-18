@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import ProblemDescription from "../components/ProblemDescription";
 import OutputPanel from "../components/OutputPanel";
-import CodeEditorPanel from "../components/CodeEditor";
+import CodeEditorPanel from "../components/CodeEditorPanel";
 import { executeCode } from "../lib/piston";
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
@@ -16,9 +16,7 @@ const ProblemPage = () => {
 
 	const [currentProblemId, setCurrentProblemId] = useState("two-sum");
 	const [selectedLanguage, setSelectedLanguage] = useState("java");
-	const [code, setCode] = useState(
-		PROBLEMS[currentProblemId].starterCode.java
-	);
+	const [code, setCode] = useState(PROBLEMS[currentProblemId].starterCode.java);
 	const [output, setOutput] = useState(null);
 	const [isRunning, setIsRunning] = useState(false);
 
@@ -102,17 +100,13 @@ const ProblemPage = () => {
 				return;
 			}
 			// check if code executed successfully and matches expected output
-			const expectedOutput =
-				currentProblem?.expectedOutput?.[selectedLanguage];
+			const expectedOutput = currentProblem?.expectedOutput?.[selectedLanguage];
 			if (typeof expectedOutput !== "string") {
 				toast.error("No expected output configured for this language.");
 				return;
 			}
 
-			const testsPassed = checkIfTestsPassed(
-				result.output,
-				expectedOutput
-			);
+			const testsPassed = checkIfTestsPassed(result.output, expectedOutput);
 			if (testsPassed) {
 				triggerConfetti();
 				toast.success("All testCases passed");
